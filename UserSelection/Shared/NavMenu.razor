@@ -1,0 +1,65 @@
+﻿<header class="bg-white dark:bg-gray-700 px-10 py-4 shadow-lg flex items-center justify-between">
+    <div class="flex items-center w-full">
+        <img src="images/blazorlogo.png" width="48" height="48" alt="blazor thing" />
+
+        <nav class="flex ml-10 font-semibold text-gray-600 dark:text-gray-300 text-lg hidden md:block">
+            <NavLink ActiveClass="text-purple-800 dark:text-purple-400" href="" Match="NavLinkMatch.All" class="mr-10 font-semibold">Home</NavLink>
+        </nav>
+        <button class="mobile-menu-button md:hidden ml-auto" @onclick=BurgerClick>
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <line x1="4" y1="8" x2="20" y2="8" />
+                <line x1="4" y1="16" x2="20" y2="16" />
+                <line x1="4" y1="24" x2="20" y2="24" />
+            </svg>
+        </button>
+
+    </div>
+
+    <div class="md:flex items-center hidden">
+        <DarkModeToggle />
+        <a class="flex items-center ml-8 hover:text-purple-700 dark:hover:text-purple-400 dark:text-gray-300" href="https://docs.microsoft.com/aspnet/" target="_blank">
+            <svg class="h-5 stroke-current text-gray-500 dark:text-gray-400 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            About
+        </a>
+    </div>
+
+</header>
+<div class="@NavMenuCssClass flex items-center md:hidden ml-4 mt-2">
+    <nav class="flex-row bg-white p-4 space-y-2 rounded-lg">
+        <div class="nav-item px-6 hover:bg-purple-400 py-2 rounded-lg">
+            <NavLink ActiveClass="text-purple-800 dark:text-purple-400" class="dark:text-gray-500 dark:hover:text-purple-900" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+
+        <hr class="my-8 px-4 h-px bg-gray-200 border-0 dark:bg-gray-700">
+        <a class="flex items-center ml-8 hover:text-purple-700 dark:hover:text-purple-400 dark:text-gray-300" href="https://docs.microsoft.com/aspnet/" target="_blank">
+            <svg class="h-5 stroke-current text-gray-500 dark:text-gray-400 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            About
+        </a>
+    </nav>
+</div>
+
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "hidden" : null;
+
+    private string mobileHiddenStyle = "hidden";
+
+    //handle the burger clicks
+    private void BurgerClick()
+    {
+        if (mobileHiddenStyle == "flex")
+        {
+            mobileHiddenStyle = "hidden";
+        }
+        else
+        {
+            mobileHiddenStyle = "flex";
+        }
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

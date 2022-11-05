@@ -1,0 +1,182 @@
+﻿@page "/"
+
+@using UserSelection.Data
+
+<PageTitle>Home</PageTitle>
+<div class="w-1/3 ml-4">
+    <SurveyPrompt Title="This application shows how to use  drop down linked to a List box with dynamic items being populated by the first drop down" />
+</div>
+
+<div>
+    <div class="flex flex-grow h-72">
+        <div class="w-3/4 m-16">
+            <div class="flex justify-center h-3/4">
+                <div>
+                    <div class="dropdown relative">
+                        <button class="dropdown-toggle px-6 py-2.5 bg-purple-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-purple-800 hover:shadow-lg w-48
+                focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-800 active:shadow-lg active:text-white transition  duration-150
+                ease-in-out flex items-center whitespace-nowrap"
+                                type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" @onclick=ShowDropDown>
+                            <span class="w-48 top-0 left-0 ">@SelectedItem</span>
+                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="caret-down" class="w-2 ml-2" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                                <path fill="currentColor" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"></path>
+                            </svg>
+                        </button>
+                        <ul class="@DropDownClass dropdown-menu min-w-max absolute bg-purple-300 text-base z-50 float-left py-2 list-none text-left rounded-lg shadow-lg mt-1 m-0 bg-clip-padding border-none  w-full" aria-labelledby="dropdownMenuButton1">
+                            <li>
+                                <span class="dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-purple-200" @onclick='x => SetValue("All")'>All</span>
+                            </li>
+                            <li>
+                                <span class="dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-purple-200" @onclick='x => SetValue("Name")'>Name</span>
+                            </li>
+                            <li>
+                                <span class="dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-purple-200" @onclick='x => SetValue("City")'>City</span>
+                            </li>
+                            <li>
+                                <span class="dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-purple-200" @onclick='x => SetValue("Zip")'>Zip</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (DisplayItems.Any())
+    {
+        <div class="container mx-auto @showOptionsCss">
+            <div class="-mt-36 mx-auto z-10 w-48 bg-purple-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-purple-800 hover:shadow-lg">
+                <ul class=" @showOptionsCss p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
+                    @if (SelectedItem == "Name" && userNamePOCOnly)
+                    {
+                    <li>
+                        <div class="flex items-center">
+                            <input id="checkbox-item-1" type="checkbox" checked=userNamePOCOnly @onchange='eventArgs => { CheckboxClicked("POC", eventArgs.Value); }' class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                            <label for="checkbox-item-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">POC</label>
+                        </div>
+                    </li>
+                    }
+                    else
+                    {
+                        @foreach (var item in DisplayItems)
+                        {
+                            var text = item;
+                            bool isChecked = selectedItems.Contains(text);
+                            <li>
+                                <div class="flex items-center">
+                                    <input id="checkbox-item-1" type="checkbox" checked=@isChecked @onchange="eventArgs => { CheckboxClicked(text, eventArgs.Value); }" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <label for="checkbox-item-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">@item</label>
+                                </div>
+                            </li>
+                        }
+                    }
+
+                </ul>
+            </div>
+        </div>
+    }
+
+    
+</div>
+
+
+
+@code {
+    private string DropDownClass = "hidden";
+    private string SelectedItem = "Select User Group";
+    private string showOptionsCss = "hidden";
+    private bool userNamePOCOnly = true;
+    private List<string> Users = new List<string>() { "POC"};
+    private List<string> Cities = new List<string>() { "POC" };
+    private List<string> Zips = new List<string>() { "POC" };
+    private List<string> DisplayItems = new List<string>();
+    private List<string> selectedItems = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Users.AddRange(new Users().Names);
+        Cities.AddRange(new Cities().City);
+        Zips.AddRange(new Zips().ZipCodes);
+    }
+
+    private void ShowDropDown()
+    {
+        if (string.IsNullOrEmpty(DropDownClass))
+        {
+            DropDownClass = "hidden";
+        }
+        else
+        {
+            DropDownClass = "";
+        }
+        StateHasChanged();
+    }
+
+    private void SetValue(string data)
+    {
+        SelectedItem = data;
+        DropDownClass = "hidden";
+        DisplayItems.Clear();
+        selectedItems.Clear();
+
+        if (data == "Name")
+        {
+            DisplayItems.AddRange(Users);
+        }
+        if (data == "City")
+        {
+            DisplayItems.AddRange(Cities);
+        }
+        if (data == "Zip")
+        {
+            DisplayItems.AddRange(Zips);
+        }
+        if (data != "All" && data != "Select User Group")
+        {
+            showOptionsCss = "";
+        }
+        else if(data == "All")
+        {
+            showOptionsCss = "hidden";
+        }
+        else
+        {
+            DisplayItems.Clear();
+            SelectedItem = "Select User Group";
+        }
+    }
+
+    public void CheckboxClicked(string aSelectedId, object? aChecked)
+    {
+        if (aChecked != null)
+        {
+            if ((bool)aChecked)
+            {
+                if (!selectedItems.Contains(aSelectedId))
+                {
+                    selectedItems.Add(aSelectedId);
+                }
+            }
+            else
+            {
+                if (selectedItems.Contains(aSelectedId))
+                {
+                    selectedItems.Remove(aSelectedId);
+                }
+            }
+
+            if (SelectedItem == "Name")
+            {
+                if (selectedItems.Contains("POC"))
+                {
+                    userNamePOCOnly = !userNamePOCOnly;
+                    selectedItems.Clear();
+                }
+                else
+                {
+                    userNamePOCOnly = false;
+                }
+            }
+            StateHasChanged();
+        }
+    }
+}
